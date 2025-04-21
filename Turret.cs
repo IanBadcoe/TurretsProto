@@ -1,29 +1,36 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Dynamic;
 using System.Linq;
+using Chickensoft.AutoInject;
+using Chickensoft.Introspection;
 using Godot;
-using SubD;
 
+[Meta(typeof(IAutoNode))]
 public partial class Turret : Node3D
 {
+    public override void _Notification(int what) => this.Notify(what);
+
     public static List<Turret> Turrets
     {
         get;
         private set;
     } = [];
 
+    [Node]
     public Node3D Base
     {
         get;
         private set;
     }
+
+    [Node]
     public Node3D Body
     {
         get;
         private set;
     }
+
+    [Node]
     public Node3D Weapon
     {
         get;
@@ -53,12 +60,10 @@ public partial class Turret : Node3D
         set;
     }
 
-    public override void _Ready()
+    // give no dependencies, equivalent to _Ready
+    // but using it here to remind me about [Dependency], IProvide, this.Provide(), OnProvided
+    public void OnResolved()
     {
-        Base = GetNode<Node3D>("Base");
-        Body = Base.GetNode<Node3D>("Body");
-        Weapon = Body.GetNode<Node3D>("Weapon");
-
         Turrets.Add(this);
 
         ChainTween();
