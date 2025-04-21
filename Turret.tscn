@@ -1,0 +1,69 @@
+[gd_scene load_steps=2 format=3 uid="uid://uv2i8tuicfu5"]
+
+[ext_resource type="Script" uid="uid://cdap3cl235sy0" path="res://Turret.cs" id="1_w3f5i"]
+
+[node name="Turret" type="Node3D"]
+script = ExtResource("1_w3f5i")
+
+[node name="Base" type="Node3D" parent="."]
+
+[node name="BaseModel" type="CSGCylinder3D" parent="Base"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.125, 0)
+radius = 1.05
+height = 0.25
+sides = 40
+
+[node name="BaseHole" type="CSGCylinder3D" parent="Base/BaseModel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+operation = 2
+radius = 1.0
+height = 0.25
+sides = 40
+
+[node name="Body" type="Node3D" parent="Base"]
+transform = Transform3D(0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866025, 0, 0.1, 0)
+
+[node name="BodyModel" type="CSGCylinder3D" parent="Base/Body"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+radius = 1.0
+height = 0.2
+sides = 40
+
+[node name="OuterSphere" type="CSGSphere3D" parent="Base/Body/BodyModel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+radius = 1.0
+radial_segments = 40
+rings = 20
+
+[node name="RemoveBottom" type="CSGCylinder3D" parent="Base/Body/BodyModel/OuterSphere"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.9, 0)
+operation = 2
+radius = 1.5
+height = 1.0
+
+[node name="MakeHollow" type="CSGSphere3D" parent="Base/Body/BodyModel/OuterSphere"]
+operation = 2
+radius = 0.95
+radial_segments = 40
+rings = 20
+
+[node name="CutWeaponSlot" type="CSGPolygon3D" parent="Base/Body/BodyModel/OuterSphere"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.2)
+operation = 2
+polygon = PackedVector2Array(-0.2, 0, -0.2, 1.1, 1.1, 1.1, 1.1, 0)
+depth = 0.4
+
+[node name="Weapon" type="Node3D" parent="Base/Body"]
+transform = Transform3D(0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 0, 0, 1, 0, 0.7, 0)
+
+[node name="WeaponModel" type="CSGCylinder3D" parent="Base/Body/Weapon"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, 0)
+radius = 0.175
+height = 1.3
+sides = 20
+
+[node name="WeaponHole" type="CSGCylinder3D" parent="Base/Body/Weapon/WeaponModel"]
+operation = 2
+radius = 0.13
+height = 1.5
+sides = 20
