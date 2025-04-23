@@ -5,7 +5,7 @@ using Chickensoft.AutoInject;
 using Chickensoft.Introspection;
 using Godot;
 
-[Meta(typeof(IAutoNode))]
+[Meta(typeof(IAutoConnect))]
 public partial class Turret : Node3D
 {
     public override void _Notification(int what) => this.Notify(what);
@@ -60,9 +60,9 @@ public partial class Turret : Node3D
         set;
     }
 
-    // give no dependencies, equivalent to _Ready
-    // but using it here to remind me about [Dependency], IProvide, this.Provide(), OnProvided
-    public void OnResolved()
+    // if we move on to using IProvider/IDependent then they add further
+    // alternatives to this: OnResolved, OnPostInitialize...
+    public override void _Ready()
     {
         Turrets.Add(this);
 
@@ -100,8 +100,6 @@ public partial class Turret : Node3D
             case State.Cooldown:
                 break;
         }
-
-
     }
 
     private void Fire()
@@ -134,5 +132,4 @@ public partial class Turret : Node3D
         tween.TweenInterval(RNG.Randf() * 3);
         tween.TweenCallback(new Callable(this, "ChainTween"));
     }
-
 }
