@@ -9,5 +9,6 @@
     <PackageReference Include="Chickensoft.Introspection" Version="3.0.0" />
     <PackageReference Include="Chickensoft.Introspection.Generator" Version="3.0.0" PrivateAssets="all" OutputItemType="analyzer" />
     <PackageReference Include="Chickensoft.GodotNodeInterfaces" Version="2.4.0" />
+    <PackageReference Include="Chickensoft.LogicBlocks" Version="5.18.0" />
   </ItemGroup>
 </Project>

@@ -1,21 +1,25 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Chickensoft.AutoInject;
 using Chickensoft.Introspection;
 using Godot;
 
-[Meta(typeof(IAutoConnect))]
+[Meta(typeof(IAutoConnect), typeof(IDependent))]
 public partial class Turret : Node3D
 {
+    // --------------------------------------------------------------
+    // IAutoNode boilerplate
     public override void _Notification(int what) => this.Notify(what);
+    // --------------------------------------------------------------
 
-    public static List<Turret> Turrets
-    {
-        get;
-        private set;
-    } = [];
+    // --------------------------------------------------------------
+    // Dependencies
+    [Dependency]
+    FactionManager FM => this.DependOn<FactionManager>();
+    // --------------------------------------------------------------
 
+    // --------------------------------------------------------------
+    // Child nodes
     [Node]
     public Node3D Base
     {
@@ -36,6 +40,11 @@ public partial class Turret : Node3D
         get;
         private set;
     }
+    // --------------------------------------------------------------
+
+    public FactionManager.FactionId FactionId { get; private set; } = FactionManager.FactionId.Enemy;
+
+    FactionManager.FactionData Faction => FM.Faction(FactionId);
 
     RandomNumberGenerator RNG = new();
 
@@ -45,91 +54,117 @@ public partial class Turret : Node3D
         set;
     }
 
-    enum State
+    readonly TurretLB SM = new();
+
+    readonly TurretLB.IBinding SM_Binding;
+
+    // Construction
+    public Turret()
     {
-        ChooseTarget,
-        Tracking,
-        ReadyToFire,
-        Firing,
-        Cooldown
+        SM_Binding = SM.Bind();
+
+        SM_Binding.Handle((in TurretLB.Output.Cooldown _) => Cooldown());
+        SM_Binding.Handle((in TurretLB.Output.FindTarget _) => FindTarget());
+        SM_Binding.Handle((in TurretLB.Output.FireOn output) => FireOn(output.turret));
+        SM_Binding.Handle((in TurretLB.Output.TrackTo output) => TrackTo(output.turret));
     }
 
-    State CurrentState
+    public void OnResolved()
     {
-        get;
-        set;
+        Faction.Add(this);
+        SM.Start();
+
+        Faction.MemberAdded += OnMemberAdded;
     }
 
-    // if we move on to using IProvider/IDependent then they add further
-    // alternatives to this: OnResolved, OnPostInitialize...
-    public override void _Ready()
+    private void OnMemberAdded(Turret _)
     {
-        Turrets.Add(this);
-
-        ChainTween();
+        SM.Input(new TurretLB.Input.TurretAdded());
     }
+
+    // Godot overrides
+
 
     public override void _ExitTree()
     {
-        Turrets.Remove(this);
+        // may want these earier, on some event when we know they are going to be removed
+        Faction.MemberRemoved -= OnMemberAdded;
+        Faction.Remove(this);
     }
 
-    public override void _Process(double delta)
+    // public override void _Process(double delta)
+    // {
+    // }
+
+    // StateMachine operations
+
+    private void Cooldown()
     {
-        switch(CurrentState)
+        // throw new NotImplementedException();
+    }
+
+    private void FireOn(Turret target)
+    {
+        // throw new NotImplementedException();
+    }
+
+    private void FindTarget()
+    {
+        // there must me at least us, an one other...
+        if (Faction.Count < 2)
         {
-            case State.ChooseTarget:
-                SetRandomTarget();
-                break;
-
-            case State.Tracking:
-                break;
-            case State.ReadyToFire:
-                if (Target == null)
-                {
-                    SetState(State.ChooseTarget);
-                }
-                else
-                {
-                    Fire();
-                }
-
-                break;
-            case State.Firing:
-                break;
-            case State.Cooldown:
-                break;
+            SM.Input(new TurretLB.Input.NoTargetFound());
+        }
+        else
+        {
+            SM.Input(new TurretLB.Input.FoundTarget(RandomTarget()));
         }
     }
 
-    private void Fire()
+    private Turret RandomTarget()
     {
-        throw new NotImplementedException();
+        return RNG.RandChoice(Faction.Where(x => x != this).ToList());
     }
 
-
-    private void SetState(State chooseTarget)
+    private void TrackTo(Turret target)
     {
-        throw new NotImplementedException();
+        Vector3 d = target.Position - Position;
+
+        float heading = Mathf.Atan2(-d.Z, d.X);
+
+        Vector3 h_d = new Vector3(d.X, 0, d.Z);
+
+        float elevation = -Mathf.Atan2(h_d.Length(), d.Y);
+
+        TrackTween(heading, elevation);
     }
 
+    // internal
 
-    private void SetRandomTarget()
+    private void TrackTween(float heading, float elevation)
     {
-        Target = RNG.RandChoice(Turrets.Where(x => x != this).ToList()).AsWeak();
-    }
+        if (heading - Rotation.Y < -Mathf.Pi)
+        {
+            heading += 2 * Mathf.Pi;
+        }
 
-    private void ChainTween()
-    {
+        if (heading - Rotation.Y > Mathf.Pi)
+        {
+            heading -= 2 * Mathf.Pi;
+        }
 
         Tween tween = CreateTween();
-        tween.TweenProperty(Body, "rotation_degrees", new Vector3(0, RNG.Randf() * 360, 0), 2.0f)
+        tween.TweenProperty(Body, "rotation", new Vector3(0, heading, 0), 2.0f)
             .SetTrans(Tween.TransitionType.Cubic)
             .SetEase(Tween.EaseType.InOut);
-        tween.TweenProperty(Weapon, "rotation_degrees", new Vector3(0, 0, RNG.Randf() * -70 + 10), 2.0f)
+        tween.TweenProperty(Weapon, "rotation", new Vector3(0, 0, elevation), 2.0f)
             .SetTrans(Tween.TransitionType.Cubic)
             .SetEase(Tween.EaseType.InOut);
         tween.TweenInterval(RNG.Randf() * 3);
-        tween.TweenCallback(new Callable(this, "ChainTween"));
+        tween.TweenCallback(Callable.From(() =>
+            {
+                SM.Input(new TurretLB.Input.TrackComplete());
+            }
+        ));
     }
 }
