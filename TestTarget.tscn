@@ -1,0 +1,27 @@
+[gd_scene load_steps=5 format=3 uid="uid://qptfa72idvff"]
+
+[ext_resource type="Script" uid="uid://s6uy7a6vkc8f" path="res://TestTarget.cs" id="1_obutv"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_ravp8"]
+radius = 1.0
+height = 2.0
+radial_segments = 20
+rings = 10
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_obutv"]
+albedo_color = Color(0.33, 0.0495, 0.0495, 1)
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_obutv"]
+radius = 1.0
+
+[node name="TestTarget" type="StaticBody3D"]
+script = ExtResource("1_obutv")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+mesh = SubResource("SphereMesh_ravp8")
+surface_material_override/0 = SubResource("StandardMaterial3D_obutv")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("SphereShape3D_obutv")

@@ -1,0 +1,155 @@
+[gd_scene load_steps=10 format=3 uid="uid://yxtjkxywqjru"]
+
+[ext_resource type="Script" uid="uid://b4cuaofw61cdr" path="res://TestLevel.cs" id="1_kl5y4"]
+[ext_resource type="PackedScene" uid="uid://uv2i8tuicfu5" path="res://Turret.tscn" id="2_ugkgc"]
+[ext_resource type="PackedScene" uid="uid://qptfa72idvff" path="res://TestTarget.tscn" id="3_qp51p"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_kl5y4"]
+albedo_color = Color(1, 0.743333, 0.65, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_2xot7"]
+size = Vector3(3, 3, 3)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ugkgc"]
+albedo_color = Color(0.71, 0.777667, 1, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qp51p"]
+albedo_color = Color(0.61, 1, 0.6685, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1kog2"]
+size = Vector3(20, 1, 20)
+
+[sub_resource type="Environment" id="Environment_1kog2"]
+ambient_light_source = 2
+ambient_light_color = Color(1, 1, 1, 1)
+
+[node name="TestLevel" type="Node3D"]
+script = ExtResource("1_kl5y4")
+CameraLookAt = Vector3(0, 0, -24)
+
+[node name="Ground" type="CSGPolygon3D" parent="."]
+transform = Transform3D(3, 0, 0, 0, 1, 0, 0, 0, 3, 0, -1, 10)
+polygon = PackedVector2Array(-10, 0, -10, 1, 10, 1, 10, 0)
+depth = 20.0
+
+[node name="Cube" type="CSGPolygon3D" parent="Ground"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+polygon = PackedVector2Array(-1.5, 0, -1.5, 3, 1.5, 3, 1.5, 0)
+depth = 3.0
+material = SubResource("StandardMaterial3D_kl5y4")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Ground/Cube"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground/Cube/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -1.5)
+shape = SubResource("BoxShape3D_2xot7")
+
+[node name="Cube2" type="CSGPolygon3D" parent="Ground"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 1, -15)
+polygon = PackedVector2Array(-1.5, 0, -1.5, 3, 1.5, 3, 1.5, 0)
+depth = 3.0
+material = SubResource("StandardMaterial3D_ugkgc")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Ground/Cube2"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground/Cube2/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -1.5)
+shape = SubResource("BoxShape3D_2xot7")
+
+[node name="Cube3" type="CSGPolygon3D" parent="Ground"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 1, -10)
+polygon = PackedVector2Array(-1.5, 0, -1.5, 3, 1.5, 3, 1.5, 0)
+depth = 3.0
+material = SubResource("StandardMaterial3D_qp51p")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Ground/Cube3"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground/Cube3/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -1.5)
+shape = SubResource("BoxShape3D_2xot7")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Ground"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -10)
+shape = SubResource("BoxShape3D_1kog2")
+
+[node name="Turret" parent="." instance=ExtResource("2_ugkgc")]
+
+[node name="Turret2" parent="." instance=ExtResource("2_ugkgc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, -10)
+
+[node name="Turret3" parent="." instance=ExtResource("2_ugkgc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, -30)
+
+[node name="Turret4" parent="." instance=ExtResource("2_ugkgc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, -40)
+
+[node name="TestTarget" parent="." instance=ExtResource("3_qp51p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, -3)
+
+[node name="TestTarget2" parent="." instance=ExtResource("3_qp51p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 8.5)
+
+[node name="TestTarget3" parent="." instance=ExtResource("3_qp51p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, -4)
+
+[node name="TestTarget4" parent="." instance=ExtResource("3_qp51p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0, -14)
+
+[node name="TestTarget5" parent="." instance=ExtResource("3_qp51p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0, 4)
+
+[node name="TestTarget6" parent="." instance=ExtResource("3_qp51p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 3, -22)
+
+[node name="TestTarget7" parent="." instance=ExtResource("3_qp51p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18, 3, -25)
+
+[node name="TestTarget8" parent="." instance=ExtResource("3_qp51p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.7441, -1.90735e-06, -26.0119)
+
+[node name="TestTarget9" parent="." instance=ExtResource("3_qp51p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.345, 3, -35.63)
+
+[node name="TestTarget10" parent="." instance=ExtResource("3_qp51p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.33302, 3.8147e-06, -41.3224)
+
+[node name="TestTarget11" parent="." instance=ExtResource("3_qp51p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, -24.6812)
+
+[node name="TestTarget12" parent="." instance=ExtResource("3_qp51p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 5.71991)
+
+[node name="TestTarget13" parent="." instance=ExtResource("3_qp51p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, -6.78009)
+
+[node name="TestTarget14" parent="." instance=ExtResource("3_qp51p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0, -16.7801)
+
+[node name="TestTarget15" parent="." instance=ExtResource("3_qp51p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0, 1.21991)
+
+[node name="TestTarget16" parent="." instance=ExtResource("3_qp51p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 3, -24.7801)
+
+[node name="TestTarget17" parent="." instance=ExtResource("3_qp51p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18, 3, -27.7801)
+
+[node name="TestTarget18" parent="." instance=ExtResource("3_qp51p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.7441, -1.90735e-06, -28.792)
+
+[node name="TestTarget19" parent="." instance=ExtResource("3_qp51p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.345, 3, -38.4101)
+
+[node name="TestTarget20" parent="." instance=ExtResource("3_qp51p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.33302, 3.8147e-06, -44.1025)
+
+[node name="Camera" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 15, 0)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_1kog2")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50, 100, 50)

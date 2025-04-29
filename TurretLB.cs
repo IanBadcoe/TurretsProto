@@ -1,17 +1,14 @@
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using Chickensoft.Introspection;
 using Chickensoft.LogicBlocks;
 
 [Meta, LogicBlock(typeof(State), Diagram = true)]
 public partial class TurretLB : LogicBlock<TurretLB.State> {
-    public override Transition GetInitialState() => To<State.FindingTarget>();
+    public override Transition GetInitialState() => To<State.WaitingToStart>();
 
     public sealed record Data
     {
-        public WeakReference<Turret> Target { get; set; }
-        public List<WeakReference<Turret>> Turrets { get; set; }
+        public Actor Target { get; set; }
     }
 
     public TurretLB()
@@ -21,23 +18,32 @@ public partial class TurretLB : LogicBlock<TurretLB.State> {
 
     public static class Input
     {
-        public readonly record struct FoundTarget(Turret target);
+        public readonly record struct Start;
+        public readonly record struct FoundTarget(Actor target);
         public readonly record struct NoTargetFound;
-        public readonly record struct TurretAdded;
+        public readonly record struct EnemyAdded;
         public readonly record struct TrackComplete;
         public readonly record struct FireComplete;
         public readonly record struct CooldownComplete;
+        public readonly record struct TargetLost;
     }
 
     public static class Output
     {
         public readonly record struct FindTarget;
-        public readonly record struct TrackTo(Turret turret);
-        public readonly record struct FireOn(Turret turret);
+        public readonly record struct TrackTo(Actor Actor);
+        public readonly record struct FireOn(Actor Actor);
         public readonly record struct Cooldown;
     }
 
     public abstract partial record State : StateLogic<State> {
+        public record WaitingToStart
+            : State
+            , IGet<Input.Start>
+        {
+            public Transition On(in Input.Start input) => To<FindingTarget>();
+        }
+
         public record FindingTarget
             : State
             , IGet<Input.FoundTarget>
@@ -48,7 +54,7 @@ public partial class TurretLB : LogicBlock<TurretLB.State> {
                 this.OnEnter(() => Output(new Output.FindTarget()));
             }
             public Transition On(in Input.FoundTarget input) {
-                Get<Data>().Target = new WeakReference<Turret>(input.target);
+                Get<Data>().Target = input.target;
                 return To<Tracking>();
             }
 
@@ -57,56 +63,48 @@ public partial class TurretLB : LogicBlock<TurretLB.State> {
 
         public record NoTarget
             : State
-            , IGet<Input.TurretAdded>
+            , IGet<Input.EnemyAdded>
         {
-            public Transition On(in Input.TurretAdded _) => To<FindingTarget>();
+            public Transition On(in Input.EnemyAdded _) => To<FindingTarget>();
         }
 
         public record Tracking
             : State
             , IGet<Input.TrackComplete>
+            , IGet<Input.TargetLost>
         {
             public Tracking()
             {
-                this.OnEnter(() => TryTrackToTarget());
+                this.OnEnter(() => TrackToTarget());
             }
 
             public Transition On(in Input.TrackComplete _) => To<Firing>();
 
-            private void TryTrackToTarget()
+            public Transition On(in Input.TargetLost _) => To<FindingTarget>();
+
+            private void TrackToTarget()
             {
-                if (Get<Data>().Target.TryGetTarget(out Turret target))
-                {
-                    Output(new Output.TrackTo(target));
-                }
-                else
-                {
-                    To<FindingTarget>();
-                }
+                Output(new Output.TrackTo(Get<Data>().Target));
             }
         }
 
         public record Firing
             : State
             , IGet<Input.FireComplete>
+            , IGet<Input.TargetLost>
         {
             public Firing()
             {
-                this.OnEnter(() => TryFireOnTarget());
+                this.OnEnter(() => FireOnTarget());
             }
 
             public Transition On(in Input.FireComplete _) => To<Coolingdown>();
 
-            private void TryFireOnTarget()
+            public Transition On(in Input.TargetLost input) => To<FindingTarget>();
+
+            private void FireOnTarget()
             {
-                if (Get<Data>().Target.TryGetTarget(out Turret target))
-                {
-                    Output(new Output.FireOn(target));
-                }
-                else
-                {
-                    To<FindingTarget>();
-                }
+                Output(new Output.FireOn(Get<Data>().Target));
             }
         }
 

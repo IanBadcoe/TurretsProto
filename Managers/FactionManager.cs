@@ -1,7 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using SubD;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using Godot;
+using Godot_Util;
 
 public class FactionManager
 {
@@ -11,31 +14,31 @@ public class FactionManager
         Enemy,          //< add more later
     }
 
-    public class FactionData : IReadOnlyCollection<Turret>
+    public class FactionData : IReadOnlyCollection<Actor>
     {
-        List<Turret> Turrets = [];
+        List<Actor> Actors = [];
 
-        public void Add(Turret turret)
+        public void Add(Actor actor)
         {
-            Util.Assert(!Turrets.Contains(turret));
+            Util.Assert(!Actors.Contains(actor));
 
-            Turrets.Add(turret);
+            Actors.Add(actor);
 
-            MemberAdded?.Invoke(turret);
+            MemberAdded?.Invoke(actor);
         }
 
-        public void Remove(Turret turret)
+        public void Remove(Actor actor)
         {
-            Util.Assert(Turrets.Contains(turret));
+            Util.Assert(Actors.Contains(actor));
 
-            Turrets.Remove(turret);
+            Actors.Remove(actor);
 
-            MemberRemoved?.Invoke(turret);
+            MemberRemoved?.Invoke(actor);
         }
 
         // --------------------------------------------------------------
         // delegates
-        public delegate void MemberChangeDelegate(Turret added);
+        public delegate void MemberChangeDelegate(Actor added);
 
         public MemberChangeDelegate MemberAdded;
 
@@ -44,11 +47,11 @@ public class FactionManager
 
         // --------------------------------------------------------------
         // enumeration/collection
-        public int Count => Turrets.Count;
+        public int Count => Actors.Count;
 
-        public IEnumerator<Turret> GetEnumerator()
+        public IEnumerator<Actor> GetEnumerator()
         {
-            return Turrets.GetEnumerator();
+            return Actors.Where(x => GodotObject.IsInstanceValid(x.AsNode3D())).GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()

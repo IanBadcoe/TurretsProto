@@ -1,6 +1,12 @@
-[gd_scene load_steps=2 format=3 uid="uid://uv2i8tuicfu5"]
+[gd_scene load_steps=6 format=3 uid="uid://uv2i8tuicfu5"]
 
 [ext_resource type="Script" uid="uid://cdap3cl235sy0" path="res://Turret.cs" id="1_w3f5i"]
+[ext_resource type="Material" uid="uid://c54t0u5ghhxiu" path="res://TurretBase.tres" id="2_wvatt"]
+[ext_resource type="Material" uid="uid://bvk5017lunjrt" path="res://TurretBody.tres" id="3_vc5tq"]
+[ext_resource type="Material" uid="uid://2l23va5aa1cr" path="res://TurretGun.tres" id="4_d3wxe"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_w3f5i"]
+radius = 1.0
 
 [node name="Turret" type="Node3D"]
 script = ExtResource("1_w3f5i")
@@ -13,6 +19,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.125, 0)
 radius = 1.05
 height = 0.25
 sides = 40
+material = ExtResource("2_wvatt")
 
 [node name="BaseHole" type="CSGCylinder3D" parent="Base/BaseModel"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
@@ -30,12 +37,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
 radius = 1.0
 height = 0.2
 sides = 40
+material = ExtResource("3_vc5tq")
 
 [node name="OuterSphere" type="CSGSphere3D" parent="Base/Body/BodyModel"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 radius = 1.0
 radial_segments = 40
 rings = 20
+material = ExtResource("3_vc5tq")
 
 [node name="RemoveBottom" type="CSGCylinder3D" parent="Base/Body/BodyModel/OuterSphere"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.9, 0)
@@ -48,12 +57,14 @@ operation = 2
 radius = 0.95
 radial_segments = 40
 rings = 20
+material = ExtResource("3_vc5tq")
 
 [node name="CutWeaponSlot" type="CSGPolygon3D" parent="Base/Body/BodyModel/OuterSphere"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.2)
 operation = 2
 polygon = PackedVector2Array(-0.2, 0, -0.2, 1.1, 1.1, 1.1, 1.1, 0)
 depth = 0.4
+material = ExtResource("3_vc5tq")
 
 [node name="Weapon" type="Node3D" parent="Base/Body"]
 unique_name_in_owner = true
@@ -64,9 +75,15 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, 0)
 radius = 0.175
 height = 1.3
 sides = 20
+material = ExtResource("4_d3wxe")
 
 [node name="WeaponHole" type="CSGCylinder3D" parent="Base/Body/Weapon/WeaponModel"]
 operation = 2
 radius = 0.13
 height = 1.5
 sides = 20
+material = ExtResource("4_d3wxe")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Base/Body"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
+shape = SubResource("SphereShape3D_w3f5i")

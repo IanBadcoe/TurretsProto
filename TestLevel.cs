@@ -1,10 +1,9 @@
 using Chickensoft.AutoInject;
 using Chickensoft.Introspection;
 using Godot;
-using System;
 
 [Meta(typeof(IProvider))]
-public partial class TestLevel : Node3D, IProvide<FactionManager>
+public partial class TestLevel : Node3D, IProvide<FactionManager>, IProvide<RSG.PromiseTimer>, IProvide<GameControl>
 {
     // --------------------------------------------------------------
     // IAutoNode boilerplate
@@ -16,18 +15,36 @@ public partial class TestLevel : Node3D, IProvide<FactionManager>
 
     FactionManager FM { get; set; } = new();
 
+    RSG.PromiseTimer PT { get; set; } = new();
+
+    [Export]
+    public Vector3 CameraLookAt = Vector3.Zero;
+
+    GameControl GC = new();
+
 #region providers
     FactionManager IProvide<FactionManager>.Value() => FM;
+
+    RSG.PromiseTimer IProvide<RSG.PromiseTimer>.Value() => PT;
+
+    public GameControl Value() => GC;
 #endregion
 
     public override void _Ready()
     {
         Camera = GetNode<Camera3D>("Camera");
-        Camera.LookAt(Vector3.Zero);
+        Camera.LookAt(CameraLookAt);
 
         Sun = GetNode<DirectionalLight3D>("Sun");
         Sun.LookAt(Vector3.Zero);
 
         this.Provide();
+    }
+
+    public override void _Process(double delta)
+    {
+        PT.Update((float)delta);
+
+        GC.Process();
     }
 }

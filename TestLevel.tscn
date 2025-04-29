@@ -1,13 +1,21 @@
-[gd_scene load_steps=4 format=3 uid="uid://da306yjiwhole"]
+[gd_scene load_steps=7 format=3 uid="uid://da306yjiwhole"]
 
 [ext_resource type="Script" uid="uid://b4cuaofw61cdr" path="res://TestLevel.cs" id="1_1kog2"]
 [ext_resource type="PackedScene" uid="uid://uv2i8tuicfu5" path="res://Turret.tscn" id="1_y1jsw"]
+[ext_resource type="PackedScene" uid="uid://qptfa72idvff" path="res://TestTarget.tscn" id="3_2xot7"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_2xot7"]
+size = Vector3(3, 3, 3)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1kog2"]
+size = Vector3(20, 1, 20)
 
 [sub_resource type="Environment" id="Environment_1kog2"]
 ambient_light_source = 2
 ambient_light_color = Color(1, 1, 1, 1)
 
 [node name="TestLevel" type="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 script = ExtResource("1_1kog2")
 
 [node name="Ground" type="CSGPolygon3D" parent="."]
@@ -20,16 +28,28 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 polygon = PackedVector2Array(-1.5, 0, -1.5, 3, 1.5, 3, 1.5, 0)
 depth = 3.0
 
+[node name="StaticBody3D" type="StaticBody3D" parent="Ground/Cube"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground/Cube/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -1.5)
+shape = SubResource("BoxShape3D_2xot7")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Ground"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -10)
+shape = SubResource("BoxShape3D_1kog2")
+
 [node name="Turret" parent="." instance=ExtResource("1_y1jsw")]
 
-[node name="Turret2" parent="." instance=ExtResource("1_y1jsw")]
+[node name="TestTarget" parent="." instance=ExtResource("3_2xot7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, -3)
+
+[node name="TestTarget2" parent="." instance=ExtResource("3_2xot7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 8.5)
 
-[node name="Turret3" parent="." instance=ExtResource("1_y1jsw")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, 4)
-
-[node name="Turret4" parent="." instance=ExtResource("1_y1jsw")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, -5)
+[node name="TestTarget3" parent="." instance=ExtResource("3_2xot7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, -4)
 
 [node name="Camera" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 5, 0)
