@@ -1,9 +1,10 @@
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 
 using Chickensoft.AutoInject;
 using Chickensoft.Introspection;
+
+using RSG;
 
 using Godot;
 
@@ -18,6 +19,11 @@ public partial class Turret : Node3D, Actor
     const float TrackSpeedRadsPerSecond = 2;
 
     // --------------------------------------------------------------
+    // Editor settings
+    [Export]
+    private PackedScene MunitionScene { get; set; }
+
+    // --------------------------------------------------------------
     // IAutoNode boilerplate
     public override void _Notification(int what) => this.Notify(what);
     // --------------------------------------------------------------
@@ -28,7 +34,7 @@ public partial class Turret : Node3D, Actor
     FactionManager FM => this.DependOn<FactionManager>();
 
     [Dependency]
-    RSG.PromiseTimer PT => this.DependOn<RSG.PromiseTimer>();
+    PromiseTimer PT => this.DependOn<PromiseTimer>();
 
     [Dependency]
     GameControl GC => this.DependOn<GameControl>();
@@ -52,12 +58,6 @@ public partial class Turret : Node3D, Actor
 
     [Node]
     public Node3D Weapon
-    {
-        get;
-        private set;
-    }
-
-    public PackedScene MunitionScene
     {
         get;
         private set;
@@ -95,8 +95,6 @@ public partial class Turret : Node3D, Actor
         SM_Binding.Handle((in TurretLB.Output.FindTarget _) => FindTarget());
         SM_Binding.Handle((in TurretLB.Output.FireOn output) => Fire(output.Actor));
         SM_Binding.Handle((in TurretLB.Output.TrackTo output) => TrackTo(output.Actor));
-
-        MunitionScene = GD.Load<PackedScene>("res://Bullet.tscn");
     }
 
     public void OnResolved()
@@ -136,7 +134,7 @@ public partial class Turret : Node3D, Actor
             .Then(() => SM.Input(new TurretLB.Input.CooldownComplete()));
     }
 
-    private RSG.IPromise CoolDownInner()
+    private IPromise CoolDownInner()
     {
         return PT.WaitFor(0.5f);;
     }
@@ -155,9 +153,9 @@ public partial class Turret : Node3D, Actor
             });
     }
 
-    private RSG.IPromise<int> FireN(int n)
+    private IPromise<int> FireN(int n)
     {
-        RSG.IPromise<int> promise = null;
+        IPromise<int> promise = null;
 
         for(int i = 0; i < n; i++)
         {
@@ -174,9 +172,9 @@ public partial class Turret : Node3D, Actor
         return promise;
     }
 
-    private RSG.IPromise<int> FireOne(int i)
+    private IPromise<int> FireOne(int i)
     {
-        RSG.Promise<int> promise = new();
+        Promise<int> promise = new();
 
         PT.WaitFor(0.1f)
             .Then(() => {

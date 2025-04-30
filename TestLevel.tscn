@@ -1,8 +1,9 @@
-[gd_scene load_steps=7 format=3 uid="uid://da306yjiwhole"]
+[gd_scene load_steps=8 format=3 uid="uid://da306yjiwhole"]
 
 [ext_resource type="Script" uid="uid://b4cuaofw61cdr" path="res://TestLevel.cs" id="1_1kog2"]
-[ext_resource type="PackedScene" uid="uid://uv2i8tuicfu5" path="res://Turret.tscn" id="1_y1jsw"]
-[ext_resource type="PackedScene" uid="uid://qptfa72idvff" path="res://TestTarget.tscn" id="3_2xot7"]
+[ext_resource type="PackedScene" uid="uid://uv2i8tuicfu5" path="res://Objects/Turret.tscn" id="1_y1jsw"]
+[ext_resource type="PackedScene" uid="uid://qptfa72idvff" path="res://Objects/TestTarget.tscn" id="3_2xot7"]
+[ext_resource type="PackedScene" uid="uid://cg23jsufevlnk" path="res://Objects/Bullet.tscn" id="3_waekl"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_2xot7"]
 size = Vector3(3, 3, 3)
@@ -15,7 +16,6 @@ ambient_light_source = 2
 ambient_light_color = Color(1, 1, 1, 1)
 
 [node name="TestLevel" type="Node3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 script = ExtResource("1_1kog2")
 
 [node name="Ground" type="CSGPolygon3D" parent="."]
@@ -41,6 +41,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -10)
 shape = SubResource("BoxShape3D_1kog2")
 
 [node name="Turret" parent="." instance=ExtResource("1_y1jsw")]
+MunitionScene = ExtResource("3_waekl")
 
 [node name="TestTarget" parent="." instance=ExtResource("3_2xot7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, -3)

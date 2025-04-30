@@ -1,15 +1,17 @@
-[gd_scene load_steps=6 format=3 uid="uid://uv2i8tuicfu5"]
+[gd_scene load_steps=7 format=3 uid="uid://uv2i8tuicfu5"]
 
-[ext_resource type="Script" uid="uid://cdap3cl235sy0" path="res://Turret.cs" id="1_w3f5i"]
-[ext_resource type="Material" uid="uid://c54t0u5ghhxiu" path="res://TurretBase.tres" id="2_wvatt"]
-[ext_resource type="Material" uid="uid://bvk5017lunjrt" path="res://TurretBody.tres" id="3_vc5tq"]
-[ext_resource type="Material" uid="uid://2l23va5aa1cr" path="res://TurretGun.tres" id="4_d3wxe"]
+[ext_resource type="Script" uid="uid://cdap3cl235sy0" path="res://Objects/Turret.cs" id="1_w3f5i"]
+[ext_resource type="Material" uid="uid://c54t0u5ghhxiu" path="res://Materials/TurretBase.tres" id="2_wvatt"]
+[ext_resource type="PackedScene" uid="uid://cg23jsufevlnk" path="res://Objects/Bullet.tscn" id="2_x31ab"]
+[ext_resource type="Material" uid="uid://bvk5017lunjrt" path="res://Materials/TurretBody.tres" id="3_vc5tq"]
+[ext_resource type="Material" uid="uid://2l23va5aa1cr" path="res://Materials/TurretGun.tres" id="4_d3wxe"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_w3f5i"]
 radius = 1.0
 
 [node name="Turret" type="Node3D"]
 script = ExtResource("1_w3f5i")
+MunitionScene = ExtResource("2_x31ab")
 
 [node name="Base" type="Node3D" parent="."]
 unique_name_in_owner = true

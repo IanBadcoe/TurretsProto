@@ -1,8 +1,8 @@
 [gd_scene load_steps=10 format=3 uid="uid://yxtjkxywqjru"]
 
 [ext_resource type="Script" uid="uid://b4cuaofw61cdr" path="res://TestLevel.cs" id="1_kl5y4"]
-[ext_resource type="PackedScene" uid="uid://uv2i8tuicfu5" path="res://Turret.tscn" id="2_ugkgc"]
-[ext_resource type="PackedScene" uid="uid://qptfa72idvff" path="res://TestTarget.tscn" id="3_qp51p"]
+[ext_resource type="PackedScene" uid="uid://uv2i8tuicfu5" path="res://Objects/Turret.tscn" id="2_ugkgc"]
+[ext_resource type="PackedScene" uid="uid://qptfa72idvff" path="res://Objects/TestTarget.tscn" id="3_qp51p"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_kl5y4"]
 albedo_color = Color(1, 0.743333, 0.65, 1)

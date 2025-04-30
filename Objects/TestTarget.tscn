@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://qptfa72idvff"]
 
-[ext_resource type="Script" uid="uid://s6uy7a6vkc8f" path="res://TestTarget.cs" id="1_obutv"]
+[ext_resource type="Script" uid="uid://s6uy7a6vkc8f" path="res://Objects/TestTarget.cs" id="1_obutv"]
 
 [sub_resource type="SphereMesh" id="SphereMesh_ravp8"]
 radius = 1.0
